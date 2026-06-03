@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "ms-toolsai.jupyter-keymap",
+    "ms-python.black-formatter",
+    "ms-python.pylint",
+    "eamodio.gitlens",
+    "mechatroner.rainbow-csv",
+    "oderwat.indent-rainbow"
+  ]
+}
