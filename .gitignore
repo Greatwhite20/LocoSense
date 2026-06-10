@@ -9,3 +9,6 @@ models/*.h5
 .DS_Store
 Thumbs.db
 .env
+models/*.pkl
+models/*.h5
+data/processed/*.csv
