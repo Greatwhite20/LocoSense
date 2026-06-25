@@ -1,4 +1,3 @@
-cat > README.md << 'EOF'
 # LocoSense
 ### AI/ML Predictive Maintenance System for RITES Locomotives
 
