@@ -14,7 +14,6 @@
     "load_factor",
     "battery_voltage",
     "brake_pressure",
-    "ru",
     "loco_age",
     "engine_temp_roll5_mean",
     "engine_temp_roll5_std",
