@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 
-const API = import.meta.env.VITE_API_URL || "http://localhost:5001";
+const API = import.meta.env.VITE_API_URL || "https://locosense-3sx8.onrender.com";
 const POLL_MS = 120000;
 
 const RISK_META = {
