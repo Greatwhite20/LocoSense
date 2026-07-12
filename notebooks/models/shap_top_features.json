@@ -1,0 +1,42 @@
+[
+  {
+    "feature": "RU",
+    "mean_shap": 0.13983651995658875
+  },
+  {
+    "feature": "cycle",
+    "mean_shap": 0.13033905625343323
+  },
+  {
+    "feature": "vibration    (mms)_roll10_mean",
+    "mean_shap": 0.011325257830321789
+  },
+  {
+    "feature": "turbo pressure (bar)_roll10_mean",
+    "mean_shap": 0.008668028749525547
+  },
+  {
+    "feature": "oil pressure (bar)_roll10_mean",
+    "mean_shap": 0.006639682222157717
+  },
+  {
+    "feature": "totalcycles",
+    "mean_shap": 0.004152830224484205
+  },
+  {
+    "feature": "bearing temp  (C)_roll10_mean",
+    "mean_shap": 0.003977702930569649
+  },
+  {
+    "feature": "vibration    (mms)_roll5_mean",
+    "mean_shap": 0.0030974631663411856
+  },
+  {
+    "feature": "vibration    (mms)",
+    "mean_shap": 0.002263791859149933
+  },
+  {
+    "feature": "fuel efficiency (%)_roll10_mean",
+    "mean_shap": 0.0019319587154313922
+  }
+]
