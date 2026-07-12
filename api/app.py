@@ -28,6 +28,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import traceback
+from predict import predict_regressor
 
 from config import HOST, PORT, DEBUG
 from data_prep import load_raw_dataset, prepare_simulated_snapshot
@@ -95,7 +96,7 @@ def get_live_fleet_scored() -> "pd.DataFrame":
     snapshot = SIMULATOR.get_current_rows()                       # raw rows, 1 per loco
     prepared = prepare_simulated_snapshot(snapshot, SCALER, FEATURE_COLS)  # engineered + scaled
 
-    proba = predict_proba(ARTIFACTS['model'], FEATURE_COLS, prepared)
+    proba = predict_regressor(ARTIFACTS['model'], FEATURE_COLS, prepared)
     prepared = prepared.copy()
     prepared['failure_prob'] = proba
 
@@ -107,8 +108,10 @@ def get_live_fleet_scored() -> "pd.DataFrame":
             prepared[col] = snapshot[col].values
         elif col in snapshot.columns:
             prepared[col] = snapshot[col].values
-
+        if 'ru' in snapshot.columns:
+            prepared['ru'] = snapshot['ru'].values
     return prepared
+    
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -17,7 +17,6 @@ from config import (
 # ── Load model artifacts once at startup ──────────────────────────────────────
 
 def load_model_artifacts():
-    """Load model, metadata, and SHAP explainer. Call once at startup."""
     model = joblib.load(MODEL_PATH)
 
     with open(MODEL_META_PATH) as f:
@@ -43,7 +42,6 @@ def load_model_artifacts():
 # ── Risk category ──────────────────────────────────────────────────────────────
 
 def get_risk_category(prob: float) -> str:
-    """Map a failure probability to a risk label (model-based, binary boundary)."""
     for label, (lo, hi) in RISK_BANDS.items():
         if lo <= prob < hi:
             return label
@@ -78,6 +76,10 @@ def predict_proba(model, feature_cols: list, X: pd.DataFrame) -> np.ndarray:
     """Run model inference. Returns array of failure probabilities."""
     X_model = X.reindex(columns=feature_cols, fill_value=0)
     return model.predict_proba(X_model)[:, 1]
+def predict_regressor(model, feature_cols: list, X: pd.DataFrame) -> np.ndarray:
+    """Run regressor inference. Returns clipped 0-1 degradation scores."""
+    X_model = X.reindex(columns=feature_cols, fill_value=0)
+    return np.clip(model.predict(X_model), 0, 1)
 
 
 # ── SHAP explanation for one row ──────────────────────────────────────────────
@@ -129,7 +131,7 @@ def score_fleet(artifacts: dict, fleet_df: pd.DataFrame) -> pd.DataFrame:
     model        = artifacts['model']
     feature_cols = artifacts['feature_cols']
 
-    proba = predict_proba(model, feature_cols, fleet_df)
+    proba = predict_regressor(model, feature_cols, fleet_df)
 
     result = fleet_df.copy()
     result['failure_prob']  = proba
@@ -154,13 +156,15 @@ def build_fleet_response(scored_latest: pd.DataFrame) -> list:
     """
     records = []
     for _, row in scored_latest.iterrows():
-        prob   = float(row['failure_prob'])
+        prob = float(row['failure_prob'])
         ru_val = float(row.get('ru', 0))
-        risk   = get_risk_category_from_ru(ru_val)
+        risk = next(k for k, (lo, hi) in RISK_BANDS.items() if lo <= prob < hi)
 
+        loco_type_val = str(row.get('loco_type_name', row.get('loco_type', '')))
         records.append({
             'loco_id'         : str(row['loco_id']),
-            'loco_type'       : str(row.get('loco_type_name', row.get('loco_type', ''))),
+            'loco_type'       : loco_type_val,
+            'traction_type'   : get_traction_type(loco_type_val),
             'zone'            : str(row.get('zone_name', row.get('zone', ''))),
             'cycle'           : int(row['cycle']),
             'ru'              : int(ru_val),
@@ -178,26 +182,72 @@ def build_fleet_response(scored_latest: pd.DataFrame) -> list:
 
 # ── Build single loco response ────────────────────────────────────────────────
 
+# ── Traction-type sensor maps ─────────────────────────────────────────────────
+# Electric locos (WAP5, WAP7, WAG9) reuse the same 12 dataset columns but
+# with domain-correct display labels. Diesel locos (WDG4, WDP4B) use the
+# original labels. The model sees identical column names either way — this
+# is purely a display/interpretation layer.
+
+ELECTRIC_TYPES = {'WAP5', 'WAP7', 'WAG9'}
+DIESEL_TYPES   = {'WDG4', 'WDP4B'}
+
+ELECTRIC_SENSOR_MAP = {
+    'engine_temp': {'label': 'Traction Motor Temp','unit': '°C'},
+    'oil_pressure': {'label': 'OHE Voltage','unit': 'kV'},
+    'vibration': {'label': 'Vibration','unit': 'mm/s'},
+    'fuel_efficiency' : {'label': 'Power Factor','unit': '%'},
+    'coolant_temp': {'label': 'Transformer Coolant Temp','unit': '°C'},
+    'bearing_temp': {'label': 'Axle Bearing Temp','unit': '°C'},
+    'rpm': {'label': 'Wheel RPM','unit': 'rpm'},
+    'exhaust_temp': {'label': 'Inverter Temp','unit': '°C'},
+    'turbo_pressure': {'label': 'Pantograph Pressure','unit': 'bar'},
+    'load_factor': {'label': 'Load Factor','unit': '%'},
+    'battery_voltage': {'label': 'Auxiliary Battery','unit': 'V'},
+    'brake_pressure': {'label': 'Brake Pressure','unit': 'bar'},
+}
+
+DIESEL_SENSOR_MAP = {
+    'engine_temp': {'label': 'Engine Temp','unit': '°C'},
+    'oil_pressure': {'label': 'Oil Pressure','unit': 'bar'},
+    'vibration': {'label': 'Vibration','unit': 'mm/s'},
+    'fuel_efficiency' : {'label': 'Fuel Efficiency','unit': '%'},
+    'coolant_temp': {'label': 'Coolant Temp','unit': '°C'},
+    'bearing_temp': {'label': 'Bearing Temp','unit': '°C'},
+    'rpm': {'label': 'Engine RPM','unit': 'rpm'},
+    'exhaust_temp': {'label': 'Exhaust Temp','unit': '°C'},
+    'turbo_pressure': {'label': 'Turbo Pressure','unit': 'bar'},
+    'load_factor': {'label': 'Load Factor','unit': '%'},
+    'battery_voltage': {'label': 'Battery Voltage','unit': 'V'},
+    'brake_pressure': {'label': 'Brake Pressure','unit': 'bar'},
+}
+
+def get_sensor_map(loco_type: str) -> dict:
+    """Return the correct sensor display map for a given loco type."""
+    if loco_type in ELECTRIC_TYPES:
+        return ELECTRIC_SENSOR_MAP
+    return DIESEL_SENSOR_MAP
+
+def get_traction_type(loco_type: str) -> str:
+    """Return 'electric' or 'diesel' for a given loco type."""
+    return 'electric' if loco_type in ELECTRIC_TYPES else 'diesel'
+
+
 def build_loco_response(artifacts: dict, loco_rows: pd.DataFrame,
                         loco_id: str, raw_loco_rows: pd.DataFrame = None) -> dict:
-    """
-    Score and explain a single loco's latest cycle.
-    Returns full detail dict for /api/loco/<id>
-
-    loco_rows     : scaled feature rows (used for model input + SHAP)
-    raw_loco_rows : unscaled raw sensor rows (used for display only) —
-                    if not provided, falls back to loco_rows (will show
-                    scaled 0-1 values, which is wrong for display but
-                    keeps the function usable standalone).
-    """
     model        = artifacts['model']
     explainer    = artifacts['explainer']
     feature_cols = artifacts['feature_cols']
 
     latest = loco_rows.sort_values('cycle').iloc[[-1]]
-    prob   = float(predict_proba(model, feature_cols, latest)[0])
+    proba = predict_regressor(model, feature_cols, latest)
     ru_val = float(latest['ru'].values[0]) if 'ru' in latest.columns else 0
-    risk   = get_risk_category_from_ru(ru_val)
+    prob = float(proba[0]) if hasattr(proba, '__len__') else float(proba)
+    risk = next(k for k, (lo, hi) in RISK_BANDS.items() if lo <= prob < hi)
+
+    days_since_svc = (
+        int(latest['days_since_service'].values[0])
+        if 'days_since_service' in latest.columns else 0
+    )
 
     drivers = get_shap_drivers(explainer, model, feature_cols, latest, top_n=6)
 
@@ -215,27 +265,57 @@ def build_loco_response(artifacts: dict, loco_rows: pd.DataFrame,
     for d in drivers:
         d['feature_display'] = clean(d['feature'])
 
+    # Determine traction type from loco_type column
+    loco_type_val = str(latest.get('loco_type_name', pd.Series([''])).values[0])
+    traction      = get_traction_type(loco_type_val)
+    sensor_map    = get_sensor_map(loco_type_val)
+
     # Current sensor readings — use RAW (unscaled) data for display.
-    # loco_rows has been through MinMaxScaler, so sensor values there are
-    # 0-1 normalised — not what an engineer wants to see on a dashboard.
+    # Returns list of dicts with label, unit, value, icon — type-aware.
     if raw_loco_rows is not None and not raw_loco_rows.empty:
         raw_latest = raw_loco_rows.sort_values('cycle').iloc[[-1]]
     else:
         raw_latest = latest  # fallback — will be scaled values
 
     sensor_readings = {
-        s: round(float(raw_latest[s].values[0]), 3)
+        s: {
+            'value': round(float(raw_latest[s].values[0]), 3),
+            'label': sensor_map[s]['label'],
+            'unit' : sensor_map[s]['unit'],
+        }
         for s in SENSOR_COLS
-        if s in raw_latest.columns
+        if s in raw_latest.columns and s in sensor_map
     }
+
+    # Also update SHAP driver display names to use type-aware labels
+    for d in drivers:
+        raw_feat = d['feature']
+        # Strip rolling/lag suffixes to get the base sensor name
+        base = raw_feat
+        for suffix in ['_roll5_mean','_roll10_mean','_roll5_std','_roll10_std','_lag1']:
+            if raw_feat.endswith(suffix):
+                base = raw_feat[:-len(suffix)]
+                break
+        if base in sensor_map:
+            sensor_label = sensor_map[base]['label']
+            suffix_label = ''
+            if '_roll5_mean'  in raw_feat: suffix_label = ' (5-cycle avg)'
+            elif '_roll10_mean' in raw_feat: suffix_label = ' (10-cycle avg)'
+            elif '_roll5_std'  in raw_feat: suffix_label = ' (5-cycle std)'
+            elif '_roll10_std' in raw_feat: suffix_label = ' (10-cycle std)'
+            elif '_lag1'       in raw_feat: suffix_label = ' (prev cycle)'
+            d['feature_display'] = sensor_label + suffix_label
+        # else keep the clean() fallback already set above
 
     return {
         'loco_id'         : loco_id,
-        'loco_type'       : str(latest.get('loco_type_name', pd.Series([loco_id])).values[0]),
+        'loco_type'       : loco_type_val,
+        'traction_type'   : traction,
         'zone'            : str(latest.get('zone_name', pd.Series(['-'])).values[0]),
         'cycle'           : int(latest['cycle'].values[0]),
         'ru'              : int(ru_val),
-        'failure_prob'    : round(prob, 4),
+        'days_since_svc'  : days_since_svc,
+        'failure_prob'    : round(float(proba[0]), 4),
         'risk_category'   : risk,
         'risk_color'      : RISK_COLORS[risk],
         'top_drivers'     : drivers,
@@ -254,8 +334,7 @@ def build_history_response(artifacts: dict, loco_rows: pd.DataFrame) -> list:
     feature_cols = artifacts['feature_cols']
 
     loco_sorted = loco_rows.sort_values('cycle').reset_index(drop=True)
-    proba       = predict_proba(model, feature_cols, loco_sorted)
-
+    proba = predict_regressor(model, feature_cols, loco_sorted)
     return [
         {
             'cycle'       : int(row['cycle']),

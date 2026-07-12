@@ -1,42 +1,42 @@
 [
   {
-    "feature": "vibration",
-    "mean_shap": 1.9448938369750977
+    "feature": "RU",
+    "mean_shap": 0.13983651995658875
   },
   {
-    "feature": "oil_pressure",
-    "mean_shap": 1.6211034059524536
+    "feature": "cycle",
+    "mean_shap": 0.13033905625343323
   },
   {
-    "feature": "turbo_pressure",
-    "mean_shap": 1.1610618829727173
+    "feature": "vibration    (mms)_roll10_mean",
+    "mean_shap": 0.011325257830321789
   },
   {
-    "feature": "engine_temp",
-    "mean_shap": 1.0446528196334839
+    "feature": "turbo pressure (bar)_roll10_mean",
+    "mean_shap": 0.008668028749525547
   },
   {
-    "feature": "vibration_roll10_std",
-    "mean_shap": 0.9235469698905945
+    "feature": "oil pressure (bar)_roll10_mean",
+    "mean_shap": 0.006639682222157717
   },
   {
-    "feature": "vibration_roll5_mean",
-    "mean_shap": 0.5501289367675781
+    "feature": "totalcycles",
+    "mean_shap": 0.004152830224484205
   },
   {
-    "feature": "vibration_lag1",
-    "mean_shap": 0.34600135684013367
+    "feature": "bearing temp  (C)_roll10_mean",
+    "mean_shap": 0.003977702930569649
   },
   {
-    "feature": "bearing_temp",
-    "mean_shap": 0.3145538866519928
+    "feature": "vibration    (mms)_roll5_mean",
+    "mean_shap": 0.0030974631663411856
   },
   {
-    "feature": "oil_pressure_roll10_std",
-    "mean_shap": 0.2790279686450958
+    "feature": "vibration    (mms)",
+    "mean_shap": 0.002263791859149933
   },
   {
-    "feature": "oil_pressure_lag1",
-    "mean_shap": 0.20767636597156525
+    "feature": "fuel efficiency (%)_roll10_mean",
+    "mean_shap": 0.0019319587154313922
   }
 ]

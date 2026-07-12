@@ -159,6 +159,7 @@ class FleetSimulator:
             closest_idx = (loco_rows['cycle'] - s['cycle']).abs().idxmin()
             row = loco_rows.loc[closest_idx].copy()
             row['sim_profile'] = s['profile']
+            row['ru'] = max(0, s['total_cycles'] - s['cycle'])
             rows.append(row)
 
         return pd.DataFrame(rows).reset_index(drop=True)

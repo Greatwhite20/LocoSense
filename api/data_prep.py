@@ -35,7 +35,7 @@ def load_raw_dataset() -> pd.DataFrame:
         'fuel efficiency (%)'  : 'fuel_efficiency',
         'coolant temp (C)'     : 'coolant_temp',
         'bearing temp  (C)'    : 'bearing_temp',
-        'RPM'                  : 'rpm',
+        'RPM'                  : 'RPM',
         'exhaust temp (C)'     : 'exhaust_temp',
         'turbo pressure (bar)' : 'turbo_pressure',
         'load factor (%)'      : 'load_factor',

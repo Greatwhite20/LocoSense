@@ -21,7 +21,7 @@ DATASET_PATH = RAW_DIR / 'locosense dataset.csv'   # note: space in filename
 # ── Sensor columns (raw — before feature engineering) ─────────────────────────
 SENSOR_COLS = [
     'engine_temp', 'oil_pressure', 'vibration', 'fuel_efficiency',
-    'coolant_temp', 'bearing_temp', 'rpm', 'exhaust_temp',
+    'coolant_temp', 'bearing_temp', 'RPM', 'exhaust_temp',
     'turbo_pressure', 'load_factor', 'battery_voltage', 'brake_pressure',
 ]
 
@@ -47,11 +47,12 @@ SCALE_COLS = SENSOR_COLS + ROLLING_COLS + LAG_COLS + [
 
 # ── Risk thresholds ───────────────────────────────────────────────────────────
 RISK_BANDS = {
-    'Low'     : (0.00, 0.30),
-    'Medium'  : (0.30, 0.50),
-    'High'    : (0.50, 0.75),
-    'Critical': (0.75, 1.01),
+    'Low'     : (0.00, 0.60),
+    'Medium'  : (0.60, 0.72),
+    'High'    : (0.72, 0.80),
+    'Critical': (0.80, 1.01),
 }
+
 
 RISK_COLORS = {
     'Low'     : '#1D9E75',
