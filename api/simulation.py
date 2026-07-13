@@ -22,6 +22,7 @@ import time
 import pandas as pd
 
 # ── Tunable simulation parameters ─────────────────────────────────────────────
+TICK_SECONDS = 30
 
 # % of total lifecycle each profile occupies (lo, hi) — calibrated against
 # the dataset's real risk_category boundaries (see Phase 5b validation)
