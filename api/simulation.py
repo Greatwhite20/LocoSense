@@ -149,10 +149,6 @@ class FleetSimulator:
 
             self._tick_count += 1
 
-    def _run_loop(self):
-        while self._running:
-            time.sleep(TICK_SECONDS)
-            self._tick_once()
 
     # ── Lifecycle control ─────────────────────────────────────────────────────
     def start(self):

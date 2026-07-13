@@ -16,7 +16,7 @@ MODEL_META_PATH   = MODELS_DIR / 'model_meta.json'
 TOP_FEATURES_PATH = MODELS_DIR / 'shap_top_features.json'
 
 # ── Dataset (used for fleet endpoint) ─────────────────────────────────────────
-DATASET_PATH = RAW_DIR / 'locosense dataset.csv'   # note: space in filename
+DATASET_PATH = RAW_DIR / 'locosense_dataset.csv'   # note: space in filename
 
 # ── Sensor columns (raw — before feature engineering) ─────────────────────────
 SENSOR_COLS = [
@@ -41,6 +41,7 @@ ROLLING_COLS = [
     for stat in ['mean', 'std']
 ]
 LAG_COLS   = [f'{s}_lag1' for s in SENSOR_COLS]
+
 SCALE_COLS = SENSOR_COLS + ROLLING_COLS + LAG_COLS + [
     'loco_age', 'days_since_service'
 ]

@@ -119,12 +119,15 @@ def get_live_fleet_scored() -> "pd.DataFrame":
 # ─────────────────────────────────────────────────────────────────────────────
 @app.route('/health')
 def health():
+    import os
     return jsonify({
         'status'   : 'ok',
         'locos'    : int(RAW_DF['loco_id'].nunique()),
         'features' : len(FEATURE_COLS),
         'model'    : 'XGBoost',
         'simulation': SIMULATOR.get_status(),
+        'pid': os.getpid(),
+        'simulator_instance': id(SIMULATOR),
     })
 
 
