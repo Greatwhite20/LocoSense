@@ -77,22 +77,24 @@ class FleetSimulator:
     def _run_loop(self):
         print("[simulation] THREAD STARTED", flush=True)
 
-    while self._running:
-        print("[simulation] waiting for next tick...", flush=True)
-        time.sleep(TICK_SECONDS)
+        while self._running:
+            print("[simulation] waiting for next tick...", flush=True)
+            time.sleep(TICK_SECONDS)
 
-        try:
-            print("[simulation] calling _tick_once()", flush=True)
-            self._tick_once()
-            print(
-                f"[simulation] tick completed — count={self._tick_count}",
-                flush=True
-            )
-        except Exception as e:
-            print(f"[simulation] TICK ERROR: {repr(e)}", flush=True)
+            try:
+                print("[simulation] calling _tick_once()", flush=True)
+                self._tick_once()
 
-            import traceback
-            traceback.print_exc()
+                print(
+                    f"[simulation] tick completed - count={self._tick_count}",
+                    flush=True
+                )
+
+            except Exception as e:
+                print(f"[simulation] TICK ERROR: {repr(e)}", flush=True)
+
+                import traceback
+                traceback.print_exc()
 
     # ── Setup ──────────────────────────────────────────────────────────────────
     def _init_state(self):
