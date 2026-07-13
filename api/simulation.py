@@ -61,8 +61,21 @@ class FleetSimulator:
     position. This keeps all sensor values realistic (sourced from actual
     data) while the *position in time* is what's simulated.
     """
+
+    def __init__(self, raw_df: pd.DataFrame, seed: int = 42):
+        self._lock = threading.Lock()
+        self._raw_df = raw_df
+        self._state = {}
+        self._running = False
+        self._thread = None
+        self._tick_count = 0
+
+        random.seed(seed)
+        self._init_state()
+    
+
     def _run_loop(self):
-     print("[simulation] THREAD STARTED", flush=True)
+        print("[simulation] THREAD STARTED", flush=True)
 
     while self._running:
         print("[simulation] waiting for next tick...", flush=True)
@@ -80,17 +93,6 @@ class FleetSimulator:
 
             import traceback
             traceback.print_exc()
-
-    def __init__(self, raw_df: pd.DataFrame, seed: int = 42):
-        self._lock = threading.Lock()
-        self._raw_df = raw_df
-        self._state = {}
-        self._running = False
-        self._thread = None
-        self._tick_count = 0
-
-        random.seed(seed)
-        self._init_state()
 
     # ── Setup ──────────────────────────────────────────────────────────────────
     def _init_state(self):
