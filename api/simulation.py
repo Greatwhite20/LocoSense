@@ -23,6 +23,21 @@ import pandas as pd
 
 # ── Tunable simulation parameters ─────────────────────────────────────────────
 TICK_SECONDS = 30  # how often the simulated fleet state advances
+def _run(self):
+    print("[simulation] THREAD STARTED", flush=True)
+
+    while self._running:
+        print("[simulation] waiting for next tick...", flush=True)
+        time.sleep(TICK_SECONDS)
+
+        try:
+            print("[simulation] calling _tick_once()", flush=True)
+            self._tick_once()
+            print("[simulation] tick completed", flush=True)
+        except Exception as e:
+            print(f"[simulation] TICK ERROR: {repr(e)}", flush=True)
+            import traceback
+            traceback.print_exc()
 
 # % of total lifecycle each profile occupies (lo, hi) — calibrated against
 # the dataset's real risk_category boundaries (see Phase 5b validation)
