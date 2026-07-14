@@ -125,7 +125,7 @@ function FleetTable({ locos, onSelect, selectedId }) {
     .sort((a, b) => typeof b[sort] === "number" ? b[sort] - a[sort] : 0);
 
   const th = (key, label) => (
-    <th onClick={() => setSort(key)} style={{ padding: "8px 12px", color: sort === key ? "#2F80ED" : "#4A5568", fontFamily: "'Montserrat', sans-serif", fontWeight: 400, letterSpacing: "0.08em", fontSize: 10, textAlign: "left", borderBottom: "1px solid #1E2A45", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none" }}>
+    <th onClick={() => setSort(key)} style={{ padding: "8px 12px", color: sort === key ? "#2F80ED" : "#9aa9c2", fontFamily: "'Montserrat', sans-serif", fontWeight: 400, letterSpacing: "0.08em", fontSize: 10, textAlign: "left", borderBottom: "1px solid #1E2A45", cursor: "pointer", whiteSpace: "nowrap", userSelect: "none" }}>
       {label}{sort === key ? " ↓" : ""}
     </th>
   );
@@ -135,11 +135,11 @@ function FleetTable({ locos, onSelect, selectedId }) {
       <div style={{ padding: "10px 16px", borderBottom: "1px solid #1E2A45", display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", background: "#0A0E1A" }}>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="SEARCH..." style={{ background: "#0D1117", border: "1px solid #1E2A45", color: "#C9D1D9", padding: "4px 10px", fontSize: 10, fontFamily: "'Montserrat', sans-serif", borderRadius: 0, outline: "none", width: 160 }} />
         {risks.map(r => (
-          <button key={r} onClick={() => setRisk(r)} style={{ padding: "3px 10px", border: `1px solid ${risk === r ? (RISK_META[r.charAt(0) + r.slice(1).toLowerCase()]?.color || "#2F80ED") : "#1E2A45"}`, background: risk === r ? "rgba(47,128,237,0.1)" : "transparent", color: risk === r ? (RISK_META[r.charAt(0) + r.slice(1).toLowerCase()]?.color || "#2F80ED") : "#4A5568", fontSize: 10, cursor: "pointer", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.06em", borderRadius: 0 }}>{r}</button>
+          <button key={r} onClick={() => setRisk(r)} style={{ padding: "3px 10px", border: `1px solid ${risk === r ? (RISK_META[r.charAt(0) + r.slice(1).toLowerCase()]?.color || "#2F80ED") : "#1E2A45"}`, background: risk === r ? "rgba(47,128,237,0.1)" : "transparent", color: risk === r ? (RISK_META[r.charAt(0) + r.slice(1).toLowerCase()]?.color || "#2F80ED") : "#9aa9c2", fontSize: 10, cursor: "pointer", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.06em", borderRadius: 0 }}>{r}</button>
         ))}
         <div style={{ width: 1, height: 14, background: "#1E2A45" }} />
         {tractions.map(t => (
-          <button key={t} onClick={() => setTract(t)} style={{ padding: "3px 10px", border: `1px solid ${tract === t ? (t === "ELECTRIC" ? "#2F80ED" : t === "DIESEL" ? "#F97316" : "#2F80ED") : "#1E2A45"}`, background: "transparent", color: tract === t ? (t === "ELECTRIC" ? "#2F80ED" : t === "DIESEL" ? "#F97316" : "#2F80ED") : "#4A5568", fontSize: 10, cursor: "pointer", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.06em", borderRadius: 0 }}>
+          <button key={t} onClick={() => setTract(t)} style={{ padding: "3px 10px", border: `1px solid ${tract === t ? (t === "ELECTRIC" ? "#2F80ED" : t === "DIESEL" ? "#F97316" : "#2F80ED") : "#1E2A45"}`, background: "transparent", color: tract === t ? (t === "ELECTRIC" ? "#2F80ED" : t === "DIESEL" ? "#F97316" : "#2F80ED") : "#9aa9c2", fontSize: 10, cursor: "pointer", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.06em", borderRadius: 0 }}>
             {t === "ELECTRIC" ? "" : t === "DIESEL" ? "" : ""}{t}
           </button>
         ))}
@@ -216,10 +216,10 @@ function SensorGrid({ readings, traction }) {
         const unit  = typeof info === "object" ? info.unit  : "";
         return (
           <div key={key} style={{ padding: "10px 14px", background: "#0D1117", borderLeft: `2px solid ${tractColor}22` }}>
-            <div style={{ fontSize: 9, color: "#4A5568", letterSpacing: "0.1em", fontFamily: "'Montserrat', sans-serif", marginBottom: 3, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{label.toUpperCase().slice(0,18)}</div>
+            <div style={{ fontSize: 9, color: "#9aa9c2", letterSpacing: "0.1em", fontFamily: "'Montserrat', sans-serif", marginBottom: 3, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{label.toUpperCase().slice(0,18)}</div>
             <div style={{ fontSize: 16, fontWeight: 700, color: tractColor, fontVariantNumeric: "tabular-nums", fontFamily: "'Montserrat', sans-serif" }}>
               {typeof val === "number" ? val.toFixed(1) : val}
-              <span style={{ fontSize: 9, color: "#4A5568", marginLeft: 3 }}>{unit}</span>
+              <span style={{ fontSize: 9, color: "#9aa9c2", marginLeft: 3 }}>{unit}</span>
             </div>
           </div>
         );
@@ -270,23 +270,23 @@ function LocoDetail({ locoId, onClose }) {
       <div style={{ padding: "14px 18px", borderBottom: "1px solid #1E2A45", borderLeft: `3px solid ${tractColor}`, display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
           <div style={{ fontSize: 16, fontWeight: 700, color: "#C9D1D9", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.05em" }}>{data.loco_id}</div>
-          <div style={{ fontSize: 10, color: "#4A5568", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.08em", marginTop: 4 }}>
+          <div style={{ fontSize: 10, color: "#9aa9c2", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.08em", marginTop: 4 }}>
             CLASS {data.loco_type} · ZONE {data.zone}<TractionTag t={traction} />
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ padding: "4px 10px", border: `1px solid ${riskMeta.border}`, color: riskMeta.color, fontSize: 10, fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.08em", borderRadius: 2 }}>{data.risk_category?.toUpperCase()} STATE</span>
-          <button onClick={onClose} style={{ background: "none", border: "1px solid #1E2A45", color: "#4A5568", padding: "4px 8px", cursor: "pointer", fontFamily: "'Montserrat', sans-serif", fontSize: 11 }}>✕</button>
+          <button onClick={onClose} style={{ background: "none", border: "1px solid #1E2A45", color: "#9aa9c2", padding: "4px 8px", cursor: "pointer", fontFamily: "'Montserrat', sans-serif", fontSize: 11 }}>✕</button>
         </div>
       </div>
 
       <div style={{ padding: "12px 18px", borderBottom: "1px solid #1E2A45", background: riskMeta.bg, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
-          <div style={{ fontSize: 10, color: "#4A5568", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em", marginBottom: 4 }}>FAIL PROB</div>
+          <div style={{ fontSize: 10, color: "#9aa9c2", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em", marginBottom: 4 }}>FAIL PROB</div>
           <div style={{ fontSize: 32, fontWeight: 700, color: riskMeta.color, fontFamily: "'Montserrat', sans-serif" }}>{(data.failure_prob*100).toFixed(2)}%</div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 10, color: "#4A5568", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em", marginBottom: 4 }}>RU CYCLES</div>
+          <div style={{ fontSize: 10, color: "#9aa9c2", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em", marginBottom: 4 }}>RU CYCLES</div>
           <div style={{ fontSize: 28, fontWeight: 700, color: "#C9D1D9", fontFamily: "'Montserrat', sans-serif" }}>{data.ru}</div>
         </div>
       </div>
@@ -294,19 +294,19 @@ function LocoDetail({ locoId, onClose }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 1, background: "#1E2A45", marginBottom: 1 }}>
         {[["CYCLE", data.cycle], ["SERVICE AGE", `${data.days_since_svc ?? "—"} d`], ["ZONE", data.zone]].map(([lbl,val]) => (
           <div key={lbl} style={{ padding: "10px 12px", background: "#0D1117" }}>
-            <div style={{ fontSize: 9, color: "#4A5568", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em", marginBottom: 3 }}>{lbl}</div>
+            <div style={{ fontSize: 9, color: "#9aa9c2", fontFamily: "'Montserrat', sans-serif", letterSpacing: "0.1em", marginBottom: 3 }}>{lbl}</div>
             <div style={{ fontSize: 15, fontWeight: 600, color: "#C9D1D9", fontFamily: "'Montserrat', sans-serif" }}>{val}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ fontSize: 9, color: "#4A5568", letterSpacing: "0.12em", padding: "8px 18px 6px", borderBottom: "1px solid #131B2E", fontFamily: "'Montserrat', sans-serif" }}>REAL-TIME SENSOR READINGS</div>
+      <div style={{ fontSize: 9, color: "#9aa9c2", letterSpacing: "0.12em", padding: "8px 18px 6px", borderBottom: "1px solid #131B2E", fontFamily: "'Montserrat', sans-serif" }}>REAL-TIME SENSOR READINGS</div>
       <SensorGrid readings={data.sensor_readings} traction={traction} />
 
-      <div style={{ fontSize: 9, color: "#4A5568", letterSpacing: "0.12em", padding: "8px 18px 4px", borderBottom: "1px solid #131B2E", fontFamily: "'Montserrat', sans-serif", marginTop: 1 }}>FAILURE PROBABILITY TREND (LAST 20 CYCLES)</div>
+      <div style={{ fontSize: 9, color: "#9aa9c2", letterSpacing: "0.12em", padding: "8px 18px 4px", borderBottom: "1px solid #131B2E", fontFamily: "'Montserrat', sans-serif", marginTop: 1 }}>FAILURE PROBABILITY TREND (LAST 20 CYCLES)</div>
       <div style={{ padding: "8px 18px 14px" }}><RiskTrendChart locoId={locoId} traction={traction} /></div>
 
-      <div style={{ fontSize: 9, color: "#4A5568", letterSpacing: "0.12em", padding: "8px 18px 4px", borderBottom: "1px solid #131B2E", fontFamily: "'Montserrat', sans-serif" }}>LOCAL SHAP DRIVER CONTRIBUTION</div>
+      <div style={{ fontSize: 9, color: "#9aa9c2", letterSpacing: "0.12em", padding: "8px 18px 4px", borderBottom: "1px solid #131B2E", fontFamily: "'Montserrat', sans-serif" }}>LOCAL SHAP DRIVER CONTRIBUTION</div>
       <ShapDrivers drivers={data.top_drivers} traction={traction} />
     </div>
   );
@@ -344,14 +344,14 @@ export default function App() {
         <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
           <img src="/logo3.png" alt="LocoSense" style={{ width: 30, height: 30, borderRadius: "50%" }} />
           <span style={{ color: "#2F80ED", fontWeight: 700, fontSize: 13, letterSpacing: "0.15em" }}>LOCOSENSE PREDICTOR</span>
-          {/* <span style={{ fontSize: 10, color: "#4A5568" }}>⚡ WAP5 · WAP7 · WAG9 &nbsp;|&nbsp; 🛢 WDG4 · WDP4B</span> */}
+          {/* <span style={{ fontSize: 10, color: "#9aa9c2" }}>⚡ WAP5 · WAP7 · WAG9 &nbsp;|&nbsp; 🛢 WDG4 · WDP4B</span> */}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 10, color: "#4A5568" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 10, color: "#9aa9c2" }}>
 
 
           <span>LAST UPDATED: {lastUpdated.toTimeString().slice(0,8)} ({elapsed}s AGO)</span>
           <button onClick={() => { refetch(); startRef.current = new Date(); setLastUpdated(new Date()); }}
-            style={{ background: "transparent", border: "1px solid #1E2A45", color: "#4A5568", padding: "3px 10px", fontSize: 10, cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.08em" }}>
+            style={{ background: "transparent", border: "1px solid #1E2A45", color: "#9aa9c2", padding: "3px 10px", fontSize: 10, cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.08em" }}>
             ↺ RESET
           </button>
         </div>
